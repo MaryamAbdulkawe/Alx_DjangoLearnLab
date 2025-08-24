@@ -1,0 +1,72 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Profile - Django Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>Profile Information</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                        {{ form.username }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                        {{ form.email }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                        {{ form.first_name }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                        {{ form.last_name }}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h4>Your Posts</h4>
+            </div>
+            <div class="card-body">
+                {% for post in user_posts %}
+                <div class="mb-3">
+                    <h6><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h6>
+                    <small class="text-muted">Published on {{ post.published_date|date:"M d, Y" }}</small>
+                    <p>{{ post.content|truncatewords:20 }}</p>
+                    <a href="{% url 'post_update' post.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'post_delete' post.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </div>
+                <hr>
+                {% empty %}
+                <p>You haven't written any posts yet. <a href="{% url 'post_create' %}">Create your first post!</a></p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5>{{ user.username }}</h5>
+                <p class="text-muted">{{ user.email }}</p>
+                <p><strong>{{ user_posts.count }}</strong> posts written</p>
+                <p class="text-muted">Member since {{ user.date_joined|date:"M Y" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
